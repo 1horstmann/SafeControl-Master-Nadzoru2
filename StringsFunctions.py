@@ -22,6 +22,7 @@ def ConsideredStrings_Publish():
         sum += 1
     print('\n* Serão consideradas', sum, 'cadeias até a falha:\n')  
     Sum = 0
+    
     i = 0  
     while i < len(Strings):  
         state_name = []  
@@ -113,9 +114,7 @@ def IsDiag_Publish():  # returns True if automata is diagnosable, and False if i
         i += 1
 
     # getting the states to the fail by the ID
-    print(f'Fault_Diag_EventStrings_IDs = {Fault_Diag_EventStrings_IDs}')
     Diag_Fault_StateString_IDs = DefineStrings.GetDiagStates(Fault_Diag_EventStrings_IDs)
-    print(f'Diag_Fault_StateString_IDs = {Diag_Fault_StateString_IDs}')
     # add next states of the string if they're uncertain
     Diag_Uncertain_StateString_IDs = DefineStrings.IsNextStateUncertain(Diag_Fault_StateString_IDs)
     # get the names for the state string
@@ -161,7 +160,6 @@ def IsSafeDiag():
             for cada in strings[j]:
                 len_strings += 1
             j += 1
-        
         
         while string_num < len_strings:
             FC_s_IDs.append(FC_s.GetFC_s_IDs(string_num))
@@ -210,7 +208,6 @@ def IsSafeDiag_Publish():
     # if it is Language Diagnosable:
     if IsDiag():
         strings = FU_s.GetStringPath()
-        print(f'strings = {strings}')
 
         # run one time for each string
         FC_s_IDs = []
@@ -222,11 +219,9 @@ def IsSafeDiag_Publish():
                 len_strings += 1
             j += 1
         
-        
         while string_num < len_strings:
             FC_s_IDs.append(FC_s.GetFC_s_IDs(string_num))
             string_num += 1
-        print(f'FC_s_IDs = {FC_s_IDs}')
 
         # getting FC(s) names
         FC_s_Names = []

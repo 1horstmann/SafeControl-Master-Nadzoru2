@@ -8,7 +8,7 @@ import DiagnoserFunctions
 def Get_FU_s(): 
     Strings = [] 
 
-    Fault_Events = DefineStrings.GetFaultEventsPosition() 
+    Fault_Events = DefineStrings.GetFaultEventsPosition()
 
     for each in Fault_Events: 
         y = DefineStrings.GetString(each) 
@@ -44,12 +44,15 @@ def Get_FU_s():
                     actual_state = DiagnoserParser.Transition_Target_Table[n] 
                     break 
                 n += 1 
-        actual_state_name = DiagnoserFunctions.GetStateName(actual_state) 
+        actual_state_name = DiagnoserFunctions.GetStateName(actual_state)
+
         if DiagnoserFunctions.IsUncertain(actual_state_name):  # just to be sure
             FU_s.append(actual_state_name) 
         i += 1  
 
     return FU_s 
+
+
 
 
 def GetUfsInId(state): 
@@ -70,5 +73,4 @@ def GetStringPath():
         Strings.append(y) 
 
     return(Strings) 
-
 

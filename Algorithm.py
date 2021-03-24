@@ -1,5 +1,6 @@
 import StringsFunctions
 
+
 #***********************************************************#
 #                                                           #
 #      This module was planned to and shall be modified     #
@@ -21,9 +22,9 @@ import StringsFunctions
 
 StringsFunctions.ConsideredStrings_Publish()
 # StringsFunctions.IsDiag()
-# StringsFunctions.IsDiag_Publish()
+StringsFunctions.IsDiag_Publish()
 # StringsFunctions.IsSafeDiag()
-# StringsFunctions.IsSafeDiag_Publish()
+StringsFunctions.IsSafeDiag_Publish()
 # StringsFunctions.IsPred()
 # StringsFunctions.IsPred_Publish()
 # StringsFunctions.IsSafeControlByDiag()
@@ -33,5 +34,4 @@ StringsFunctions.ConsideredStrings_Publish()
 # StringsFunctions.IsSafeControlByDiagAndProg()
 # StringsFunctions.IsSafeControlByDiagAndProg_Publish()
 # StringsFunctions.IsSafeControlByDiagAndProg_SelfPublish()
-
 

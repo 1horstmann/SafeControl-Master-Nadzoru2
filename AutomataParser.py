@@ -1,5 +1,5 @@
 from xml.dom.minidom import parse
-doc = parse('g001.xml')
+doc = parse('BG_5.xml')
 xml = doc.documentElement
 
 data = xml.getElementsByTagName('data')
@@ -84,3 +84,5 @@ for transition_target in transitions:
 for transition_source in transitions: 
         transition_table_source = transition_source.getAttribute('source')
         Aut_Transition_Source_Table.append(transition_table_source)
+
+

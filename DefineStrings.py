@@ -768,23 +768,21 @@ def IsNormalCycle(diag_statestring_IDs):  # find uncertain loop in a given strin
 def IsUncertainCycle(diag_statestring_IDs,antes_fu=False):  # find uncertain loop in a given string
 
     if not antes_fu:
-
         UncertainCycle = False
         i = 0 
         Eventos_falhas = list()
         while i < len(diag_statestring_IDs): 
             j = 0
-            for each in diag_statestring_IDs[i]: 
-                if DiagnoserFunctions.GetNextStatesInID(each)[0] == each or len(DiagnoserFunctions.GetNextStatesInID(each)) == 0: 
+            for each in diag_statestring_IDs[i]:
+                target =  DiagnoserFunctions.GetNextStatesInID(each)[0]
+                if target == each or len(target) == 0 or each in DiagnoserFunctions.GetNextStatesInID(target): 
                     name = DiagnoserFunctions.GetStateName(each)
                     if DiagnoserFunctions.IsUncertain(name):
                         UncertainCycle = True
                         Eventos_falhas.append(diag_statestring_IDs[i][j])
-
                 Next_States = DiagnoserFunctions.GetNextStatesInID(each) 
                 for k in Next_States: 
                     name_next_state = DiagnoserFunctions.GetStateName(k) 
-                    
                     if DiagnoserFunctions.IsUncertain(name_next_state) and each in GetDiagReachable(k) and len(Next_States) > 1: 
                         estado_anterior = DiagnoserFunctions.GetPrevisousStatesInID(int(each))
                         nome_estado_anterior = DiagnoserFunctions.GetStateName(estado_anterior[0])
@@ -793,7 +791,6 @@ def IsUncertainCycle(diag_statestring_IDs,antes_fu=False):  # find uncertain loo
                             UncertainCycle = True
                             Eventos_falhas.append(diag_statestring_IDs[i][j])
                             break
-
                 j += 1
             i += 1
         if UncertainCycle:
@@ -822,4 +819,3 @@ def IsUncertainCycle(diag_statestring_IDs,antes_fu=False):  # find uncertain loo
                     uncertain_state = [state_ids[i]]
 
         return uncertain_cycle, uncertain_state
-

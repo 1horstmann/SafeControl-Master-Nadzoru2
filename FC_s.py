@@ -89,7 +89,7 @@ def GetFC_s_IDs(string):  # gets the FC(s) for a given string number
     FU_s_StateNames = FU_s.Get_FU_s() 
 
     # for this string only, getting the FU(s):
-    FU_s_StateIDs = []  
+    FU_s_StateIDs = []
     FU_s_StateIDs.append(DiagnoserFunctions.GetStateId(FU_s_StateNames[string]))  
 
     # and getting the reachable states for this string in ID

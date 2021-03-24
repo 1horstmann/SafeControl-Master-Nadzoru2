@@ -2,7 +2,7 @@ import DiagnoserParser
 import AutomataParser
 
 
-def IsUncertain(data):
+def IsUncertain_old(data):
     if len(data) == 7:
         if ((str(data[2]) == 'F') or (str(data[3]) == 'F')) and (str(data[6]) == 'N'):
             return (True)
@@ -47,6 +47,24 @@ def IsUncertain(data):
             return (False)
     else:
         return (False)
+
+
+def IsUncertain(data):
+    data = data.upper().replace(" ", "")
+
+    n, f = False, False
+    for i in range(len(data)):     
+        if (i+1) < len(data):
+            if (data[-1] == 'F') or (data[i] == 'F' and data[i+1] == '-') :
+                f = True
+                
+            if (data[i] == 'N' and data[i+1] == ',') or  (data[i] == 'N' and data[i+1] == '-'):
+                n = True
+
+    if n and f:
+        return True
+    else:
+        return False
 
 
 def IsCertain(data):
