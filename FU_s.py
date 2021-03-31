@@ -9,7 +9,7 @@ def Get_FU_s():
     Strings = [] 
 
     Fault_Events = DefineStrings.GetFaultEventsPosition()
-
+    
     for each in Fault_Events: 
         y = DefineStrings.GetString(each) 
         for i in range(0, len(y)):
@@ -53,8 +53,6 @@ def Get_FU_s():
     return FU_s 
 
 
-
-
 def GetUfsInId(state): 
     n = 0 
     for each in DiagnoserParser.State_Name_Table: 
@@ -63,7 +61,7 @@ def GetUfsInId(state):
         n = n + 1 
 
 
-def GetStringPath(): 
+def GetStringPath():
     Strings = [] 
 
     Fault_Events = DefineStrings.GetFaultEventsPosition() 

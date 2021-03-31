@@ -92,10 +92,10 @@ def GetNextStatesInID(state):
     return (targets) 
 
 
-def GetString(position): 
+def GetString(position):
     initial_state = AutomataParser.Aut_Initial_State_ID  
     state = AutomataParser.Aut_Transition_Target_Table[position]
-    seq = GetAutomataStringBtw(initial_state, state)  
+    seq = GetAutomataStringBtw(initial_state, state)
 
     ret = []  
     i = 0 
@@ -465,7 +465,7 @@ def GetAutomataStringBtw_WithoutLoop(sourceID,targetID):
     return Event_Sequence
 
 
-def GetAutomataStringBtw_WithLoop(sourceID,targetID,diag=False):
+def GetAutomataStringBtw_WithLoop_old(sourceID,targetID,diag=False):
     event = False
     Event_Sequence = [] 
 
@@ -479,21 +479,66 @@ def GetAutomataStringBtw_WithLoop(sourceID,targetID,diag=False):
         there_is_loop = False
         past_states = list()
         NextStatesIdsLoop = False
+        loops_sequences = list()
+        contador = 0
 
-        while not status: 
+        while not status:  
+
+            if not there_is_loop:
+                igual = False
+                
+                lista_eventos_ruins = list()
+                lista_eventos_bons = list()
+                for i in range(len(State_Sequence)):
+                    for j in range(len(State_Sequence[i])):
+                        if State_Sequence[i].count(str(State_Sequence[i][j])) > 2:
+                            lista_eventos_ruins.append(State_Sequence[i])
+                            break
+                        elif State_Sequence[i].count(str(actual_state)) == 2:
+                            lista_eventos_bons.append(State_Sequence[i])
+                            break
+
+                if len(lista_eventos_ruins) > 0:
+                    maior = True
+                else:
+                    maior = False
+
+                if len(lista_eventos_bons) > 0:
+                    igual = True
+                else:
+                    igual = False
+
+                for i in range(0, len(State_Sequence)):
+                    if  maior:
+                        for each in lista_eventos_ruins:
+                            State_Sequence.remove(each)
+                        actual_state = State_Sequence[i][-1]
+
+                    if igual:
+                        for each in lista_eventos_bons:
+                            a = each.copy()
+                            State_Sequence.remove(a)
+                            a.append(targetID)
+                            loops_sequences.append(a) 
+                            
+                        actual_state = State_Sequence[i][-1]
+
+                    if len(State_Sequence) == 1 and State_Sequence[0][-1] == targetID:
+                        State_Sequence = loops_sequences
+                        status = True
+
+                    if len(State_Sequence) == 0:
+                        status = True
+
+                    if igual or maior or there_is_loop:
+                        break
+            if status:
+                break
+            
             NextStatesIds = AutomataFunctions.GetNextStatesInID(actual_state) 
             NextState = [] 
-            n = 0 
+            n = 0
 
-            if not there_is_loop: 
-                for i in range(0, len(State_Sequence)):
-                    numero  = State_Sequence[i].count(str(actual_state))
-                    if numero > 1:
-                        there_is_loop = True
-                        a = State_Sequence[i]
-                        State_Sequence = [a]
-                        actual_way = 0
-                        break
 
             if there_is_loop:
                 past_states.append(actual_state)
@@ -586,24 +631,143 @@ def GetAutomataStringBtw_WithLoop(sourceID,targetID,diag=False):
                     j += 1
                 Event_Sequence.append(answer)
                 i += 1
-            return Event_Sequence[0]
+            return Event_Sequence
         else:
-            return State_Sequence[0]
+            return State_Sequence
+
+
+def GetAutomataStringBtw_WithLoop(sourceID,targetID):
+    if targetID in GetAutReachable(sourceID): 
+        State_Sequence = [[sourceID]]
+        state = sourceID
+        actual_state = state 
+        actual_way = 0 
+        way_num = 1 
+        status = False 
+        there_is_loop = False
+
+        loops_event_sequence = list()
+        num_loop = 0
+
+
+        while not status:        
+            lista_eventos_ruins = list()
+            lista_eventos_bons = list()
+            for i in range(len(State_Sequence)):
+                for j in range(len(State_Sequence[i])):
+                    if State_Sequence[i].count(str(State_Sequence[i][j])) > 2:
+                        lista_eventos_ruins.append(State_Sequence[i])
+                        break
+                    elif State_Sequence[i].count(str(actual_state)) == 2:
+                        lista_eventos_bons.append(State_Sequence[i])
+                        break
+
+            if len(lista_eventos_ruins) > 0:
+                maior = True
+            else:
+                maior = False
+
+            if len(lista_eventos_bons) > 0:
+                igual = True
+            else:
+                igual = False
+
+            for i in range(0, len(State_Sequence)):
+                if  maior:
+                    for each in lista_eventos_ruins:
+                        State_Sequence.remove(each)
+                    actual_state = State_Sequence[i][-1]
+
+                if igual:
+                    for each in lista_eventos_bons:
+                        a = each.copy()
+                        State_Sequence.remove(a)
+                        loops_sequences = [a]
+                        
+                        k = 0
+                        while k < len(loops_sequences):
+                            answer = []
+                            j = 0
+                            while j < len(loops_sequences[k])-1:
+                                answer.append(AutomataFunctions.GetEventBetween(loops_sequences[k][j], loops_sequences[k][j+1]))
+                                j += 1
+                            loops_event_sequence.append(answer)
+                            k += 1
+                        
+                        novo_alvo = a[-1]
+                        loop_event_sequence = GetAutomataStringBtw_WithoutLoop(novo_alvo, targetID)[0]
+
+                        for x in loop_event_sequence:
+                            loops_event_sequence[num_loop].append(x)
+                        num_loop += 1 
+
+                    actual_state = State_Sequence[i][-1]
+
+                if len(State_Sequence) == 1 and State_Sequence[0][-1] == targetID:
+                    status = True
+
+                if len(State_Sequence) == 0:
+                    status = True
+
+                if igual or maior or there_is_loop:
+                    break
+            if status:
+                break
+            
+            NextStatesIds = AutomataFunctions.GetNextStatesInID(actual_state) 
+            NextState = [] 
+            n = 0
+
+            for each in NextStatesIds:
+                targets = GetAutReachable(each) 
+
+                if ((targetID in targets) or (each == targetID)): 
+                    NextState.append(each) 
+                    n += 1 
+
+            # if more then one next state was saved, increases the number of ways to get to the target
+            way_num += len(NextState) -1 
+
+            # and copy actual way how many times it's needed
+            i = 1 
+            while i < len(NextState): 
+                State_Sequence.insert(i+actual_way,copy.deepcopy(State_Sequence[actual_way])) 
+                i += 1 
+
+            #save the next states on respectives copied ways
+            i = actual_way 
+            for each in NextState: 
+                State_Sequence[i].append(each) 
+                i += 1 
+
+            # if ended one string, go to the next one
+            if State_Sequence[actual_way][-1] == targetID:
+                actual_way += 1
+
+            # if still have strings to test, update actual_state to last one
+            if actual_way < len(State_Sequence):
+                actual_state = State_Sequence[actual_way][-1]
+            # and if there is no more strings to test, end it
+            else:
+                status = True
+
+        return loops_event_sequence
+
 
 
 def GetAutomataStringBtw(sourceID, targetID):
     loop = AuxiliaryFunctions.master_loop_verification()
 
     event_sequence = list()
-    event_sequence.append(GetAutomataStringBtw_WithoutLoop(sourceID, targetID))
+    event_sequence.append(GetAutomataStringBtw_WithoutLoop(sourceID, targetID)) 
     if loop:
-        event_sequence[0].append(GetAutomataStringBtw_WithLoop(sourceID, targetID))
+        event_sequence.append(GetAutomataStringBtw_WithLoop(sourceID, targetID)) 
 
     Event_sequence = list()
     for n in event_sequence:
         for k in n:
             Event_sequence.append(k)
-
+        
     Event_sequence = AuxiliaryFunctions.checking_duplicate_string(Event_sequence)    
 
     for j in Event_sequence:
