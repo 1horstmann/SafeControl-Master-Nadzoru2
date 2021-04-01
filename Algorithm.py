@@ -20,19 +20,18 @@ import StringsFunctions
 #   Guilherme Tsubahara Horstmann                           #
 #***********************************************************#
 
-#deu certo no BG_17, verificar se da certo em todos.
 StringsFunctions.ConsideredStrings_Publish()
-# StringsFunctions.IsDiag()
-# StringsFunctions.IsDiag_Publish()
-# StringsFunctions.IsSafeDiag()
-# StringsFunctions.IsSafeDiag_Publish()
-# StringsFunctions.IsPred()
-# StringsFunctions.IsPred_Publish()
-# StringsFunctions.IsSafeControlByDiag()
-# StringsFunctions.IsSafeControlByDiag_Publish()
-# StringsFunctions.IsSafeControlByProg()
-# StringsFunctions.IsSafeControlByProg_Publish()
-# StringsFunctions.IsSafeControlByDiagAndProg()
-# StringsFunctions.IsSafeControlByDiagAndProg_Publish()
-# StringsFunctions.IsSafeControlByDiagAndProg_SelfPublish()
+StringsFunctions.IsDiag()
+StringsFunctions.IsDiag_Publish()
+StringsFunctions.IsSafeDiag()
+StringsFunctions.IsSafeDiag_Publish()
+StringsFunctions.IsPred()
+StringsFunctions.IsPred_Publish()
+StringsFunctions.IsSafeControlByDiag() 
+StringsFunctions.IsSafeControlByDiag_Publish()
+StringsFunctions.IsSafeControlByProg()
+StringsFunctions.IsSafeControlByProg_Publish()
+StringsFunctions.IsSafeControlByDiagAndProg()
+StringsFunctions.IsSafeControlByDiagAndProg_Publish()
+StringsFunctions.IsSafeControlByDiagAndProg_SelfPublish()
 

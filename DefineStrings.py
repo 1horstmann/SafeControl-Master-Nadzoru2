@@ -242,151 +242,143 @@ def GetDiagnoserStringBtw_WithoutLoop(sourceID,targetID):
     return Event_Sequence
 
 
-def GetDiagnoserStringBtw_WithLoop(sourceID,targetID,diag=True): 
-    event = False
-    Event_Sequence = [] 
-
-    # runs only if it is possible to reach it (returns [] if there is no possible string)
+def GetDiagnoserStringBtw(sourceID,targetID):
     if targetID in GetDiagReachable(sourceID): 
-        State_Sequence = [[sourceID]] 
-        state = sourceID 
+        State_Sequence = [[sourceID]]
+        state = sourceID
         actual_state = state 
         actual_way = 0 
         way_num = 1 
         status = False 
         there_is_loop = False
-        past_states = list()
-        NextStatesIdsLoop = False
 
-        while not status: 
-            NextStatesIds = DiagnoserFunctions.GetNextStatesInID(actual_state) 
-            NextState = [] 
-            n = 0 
+        loops_event_sequence = list()
+        num_loop = 0
 
-            if not there_is_loop: 
-                for i in range(0, len(State_Sequence)):
-                    numero  = State_Sequence[i].count(str(actual_state))
-                    if numero > 1:
-                        there_is_loop = True
-                        a = State_Sequence[i]
-                        State_Sequence = [a]
-                        actual_way = 0
+
+        while not status:        
+            lista_eventos_ruins = list()
+            lista_eventos_bons = list()
+            for i in range(len(State_Sequence)):
+                for j in range(len(State_Sequence[i])):
+                    if State_Sequence[i].count(str(State_Sequence[i][j])) > 2:
+                        lista_eventos_ruins.append(State_Sequence[i])
+                        break
+                    elif State_Sequence[i].count(str(actual_state)) == 2:
+                        lista_eventos_bons.append(State_Sequence[i])
                         break
 
-            if there_is_loop:
-                past_states.append(actual_state)
-                if actual_state in past_states:
-                    numero = past_states.count(actual_state)
-                    if numero > 1:
-                        NextStatesIdsLoop = True
+            if len(lista_eventos_ruins) > 0:
+                maior = True
+            else:
+                maior = False
 
-                for each in NextStatesIds:
-                    targets = GetDiagReachable(each) 
-                    Loop = AuxiliaryFunctions.loop_verification(targets, State_Sequence[actual_way])
+            if len(lista_eventos_bons) > 0:
+                igual = True
+            else:
+                igual = False
 
-                    if ((targetID in targets) or (each == targetID)) and not Loop: 
-                        NextState.append(each) 
-                        n += 1 
+            for i in range(0, len(State_Sequence)):
+                if  maior:
+                    for each in lista_eventos_ruins:
+                        State_Sequence.remove(each)
+                    actual_state = State_Sequence[i][-1]
 
-                # if more then one next state was saved, increases the number of ways to get to the target
-                way_num += len(NextState) -1 
+                if igual:
+                    for each in lista_eventos_bons:
+                        a = each.copy()
+                        State_Sequence.remove(a)
+                        loops_sequences = [a]
+                        
+                        k = 0
+                        while k < len(loops_sequences):
+                            answer = []
+                            j = 0
+                            while j < len(loops_sequences[k])-1:
+                                answer.append(DiagnoserFunctions.GetEventBetween(loops_sequences[k][j], loops_sequences[k][j+1]))
+                                j += 1
+                            loops_event_sequence.append(answer)
+                            k += 1
+                        
+                        novo_alvo = a[-1]
+                        loop_event_sequence = GetDiagnoserStringBtw_WithoutLoop(novo_alvo, targetID)[0]
 
-                if NextStatesIdsLoop:
-                    Resultado = AuxiliaryFunctions.NextStatesIdsLoopWithLoop(actual_state, targetID, State_Sequence,diag)
-                    State_Sequence = [Resultado[0]] 
-                    event = Resultado[1]
+                        for x in loop_event_sequence:
+                            loops_event_sequence[num_loop].append(x)
+                        num_loop += 1 
+
+                    actual_state = State_Sequence[i][-1]
+
+                if len(State_Sequence) == 1 and State_Sequence[0][-1] == targetID:
+                    status = True
+
+                if len(State_Sequence) == 0:
+                    status = True
+
+                if igual or maior or there_is_loop:
                     break
-                i = 1 
-                while i < len(NextState): 
-                    State_Sequence.insert(i+actual_way,copy.deepcopy(State_Sequence[actual_way]))
-                    i += 1 
+            if status:
+                break
+            
+            NextStatesIds = DiagnoserFunctions.GetNextStatesInID(actual_state) 
+            NextState = [] 
+            n = 0
 
-                #save the next states on respectives copied ways
-                i = actual_way 
-                for each in NextState: 
-                    State_Sequence[i].append(each) 
-                    i += 1 
+            for each in NextStatesIds:
+                targets = GetDiagReachable(each) 
 
-                # if ended one string, go to the next one
-                if State_Sequence[actual_way][-1] == targetID:
-                    actual_way += 1
+                if ((targetID in targets) or (each == targetID)): 
+                    NextState.append(each) 
+                    n += 1 
 
-                # if still have strings to test, update actual_state to last one
-                if actual_way < len(State_Sequence):
-                    actual_state = State_Sequence[actual_way][-1]
-                # and if there is no more strings to test, end it
-                else:
-                    status = True
+            # if more then one next state was saved, increases the number of ways to get to the target
+            way_num += len(NextState) -1 
 
-            elif not there_is_loop:
-                for each in NextStatesIds: 
-                    targets = GetDiagReachable(each) 
+            # and copy actual way how many times it's needed
+            i = 1 
+            while i < len(NextState): 
+                State_Sequence.insert(i+actual_way,copy.deepcopy(State_Sequence[actual_way])) 
+                i += 1 
 
-                    if ((targetID in targets) or (each == targetID)): 
-                        NextState.append(each) 
-                        n += 1 
+            #save the next states on respectives copied ways
+            i = actual_way 
+            for each in NextState: 
+                State_Sequence[i].append(each) 
+                i += 1 
 
-                # if more then one next state was saved, increases the number of ways to get to the target
-                way_num += len(NextState) -1 
+            # if ended one string, go to the next one
+            if State_Sequence[actual_way][-1] == targetID:
+                actual_way += 1
 
-                # and copy actual way how many times it's needed
-                i = 1 
-                while i < len(NextState): 
-                    State_Sequence.insert(i+actual_way,copy.deepcopy(State_Sequence[actual_way])) 
-                    i += 1 
+            # if still have strings to test, update actual_state to last one
+            if actual_way < len(State_Sequence):
+                actual_state = State_Sequence[actual_way][-1]
+            # and if there is no more strings to test, end it
+            else:
+                status = True
 
-                #save the next states on respectives copied ways
-                i = actual_way 
-                for each in NextState: 
-                    State_Sequence[i].append(each) 
-                    i += 1 
 
-                # if ended one string, go to the next one
-                if State_Sequence[actual_way][-1] == targetID:
-                    actual_way += 1
-
-                # if still have strings to test, update actual_state to last one
-                if actual_way < len(State_Sequence):
-                    actual_state = State_Sequence[actual_way][-1]
-                # and if there is no more strings to test, end it
-                else:
-                    status = True
-
-        if not event:
-            # getting the events for the state sequence
-            i = 0
-            while i < len(State_Sequence):
+        if len(State_Sequence) != 0:
+            primordia_state_sequence = list()
+            k = 0
+            while k < len(State_Sequence):
                 answer = []
                 j = 0
-                while j < len(State_Sequence[i])-1:
-                    answer.append(DiagnoserFunctions.GetEventBetween(State_Sequence[i][j], State_Sequence[i][j+1]))
+                while j < len(State_Sequence[k])-1:
+                    answer.append(DiagnoserFunctions.GetEventBetween(State_Sequence[k][j], State_Sequence[k][j+1]))
                     j += 1
-                Event_Sequence.append(answer)
+                
+                if len(State_Sequence[k]) == 1:
+                    answer.append(DiagnoserFunctions.GetEventBetween(State_Sequence[k][0], State_Sequence[k][0]))
+                primordia_state_sequence.append(answer)
+                k += 1
+
+            i = 0
+            for x in primordia_state_sequence:
+                loops_event_sequence.insert(i, x)
                 i += 1
-            return Event_Sequence[0]
-        else:
-            return State_Sequence[0]
 
-
-def GetDiagnoserStringBtw(sourceID, targetID):
-    loop = AuxiliaryFunctions.master_loop_verification()
-    event_sequence = list()
-    event_sequence.append(GetDiagnoserStringBtw_WithoutLoop(sourceID, targetID))
-
-    if loop:
-        event_sequence[0].append(GetDiagnoserStringBtw_WithLoop(sourceID,targetID))
-
-    Event_sequence = list()
-    for n in event_sequence:
-        for k in n:
-            Event_sequence.append(k)
-
-    Event_sequence = AuxiliaryFunctions.checking_duplicate_string(Event_sequence)    
-    for j in Event_sequence:
-        if len(j) == 0:
-            Event_sequence.remove(j)
-
-    return Event_sequence
+        return loops_event_sequence
 
 
 def GetAutomataStringBtw_WithoutLoop(sourceID,targetID): 
@@ -465,178 +457,7 @@ def GetAutomataStringBtw_WithoutLoop(sourceID,targetID):
     return Event_Sequence
 
 
-def GetAutomataStringBtw_WithLoop_old(sourceID,targetID,diag=False):
-    event = False
-    Event_Sequence = [] 
-
-    if targetID in GetAutReachable(sourceID): 
-        State_Sequence = [[sourceID]]
-        state = sourceID
-        actual_state = state 
-        actual_way = 0 
-        way_num = 1 
-        status = False 
-        there_is_loop = False
-        past_states = list()
-        NextStatesIdsLoop = False
-        loops_sequences = list()
-        contador = 0
-
-        while not status:  
-
-            if not there_is_loop:
-                igual = False
-                
-                lista_eventos_ruins = list()
-                lista_eventos_bons = list()
-                for i in range(len(State_Sequence)):
-                    for j in range(len(State_Sequence[i])):
-                        if State_Sequence[i].count(str(State_Sequence[i][j])) > 2:
-                            lista_eventos_ruins.append(State_Sequence[i])
-                            break
-                        elif State_Sequence[i].count(str(actual_state)) == 2:
-                            lista_eventos_bons.append(State_Sequence[i])
-                            break
-
-                if len(lista_eventos_ruins) > 0:
-                    maior = True
-                else:
-                    maior = False
-
-                if len(lista_eventos_bons) > 0:
-                    igual = True
-                else:
-                    igual = False
-
-                for i in range(0, len(State_Sequence)):
-                    if  maior:
-                        for each in lista_eventos_ruins:
-                            State_Sequence.remove(each)
-                        actual_state = State_Sequence[i][-1]
-
-                    if igual:
-                        for each in lista_eventos_bons:
-                            a = each.copy()
-                            State_Sequence.remove(a)
-                            a.append(targetID)
-                            loops_sequences.append(a) 
-                            
-                        actual_state = State_Sequence[i][-1]
-
-                    if len(State_Sequence) == 1 and State_Sequence[0][-1] == targetID:
-                        State_Sequence = loops_sequences
-                        status = True
-
-                    if len(State_Sequence) == 0:
-                        status = True
-
-                    if igual or maior or there_is_loop:
-                        break
-            if status:
-                break
-            
-            NextStatesIds = AutomataFunctions.GetNextStatesInID(actual_state) 
-            NextState = [] 
-            n = 0
-
-
-            if there_is_loop:
-                past_states.append(actual_state)
-                if actual_state in past_states:
-                    numero = past_states.count(actual_state)
-                    if numero > 1:
-                        NextStatesIdsLoop = True
-
-                for each in NextStatesIds: 
-                    targets = GetAutReachable(each) 
-                    Loop = AuxiliaryFunctions.loop_verification(targets, State_Sequence[actual_way])
-
-                    if ((targetID in targets) or (each == targetID)) and not Loop: 
-                        NextState.append(each) 
-                        n += 1 
-
-                # if more then one next state was saved, increases the number of ways to get to the target
-                way_num += len(NextState) -1 
-
-                if NextStatesIdsLoop:
-                    Resultado = AuxiliaryFunctions.NextStatesIdsLoopWithLoop(actual_state, targetID, State_Sequence,diag)
-                    State_Sequence = [Resultado[0]] 
-                    event = Resultado[1]
-                    break
-                # and copy actual way how many times it's needed
-                i = 1 
-                while i < len(NextState): 
-                    State_Sequence.insert(i+actual_way,copy.deepcopy(State_Sequence[actual_way])) 
-                    i += 1
-
-                #save the next states on respectives copied ways
-                i = actual_way 
-                for each in NextState: 
-                    State_Sequence[i].append(each) 
-                    i += 1 
-
-                # if ended one string, go to the next one
-                if State_Sequence[actual_way][-1] == targetID:
-                    actual_way += 1
-
-                # if still have strings to test, update actual_state to last one
-                if actual_way < len(State_Sequence):
-                    actual_state = State_Sequence[actual_way][-1]
-                # and if there is no more strings to test, end it
-                else:
-                    status = True
-
-            elif not there_is_loop:
-                for each in NextStatesIds:
-                    targets = GetAutReachable(each) 
-
-                    if ((targetID in targets) or (each == targetID)): 
-                        NextState.append(each) 
-                        n += 1 
-
-                # if more then one next state was saved, increases the number of ways to get to the target
-                way_num += len(NextState) -1 
-
-                # and copy actual way how many times it's needed
-                i = 1 
-                while i < len(NextState): 
-                    State_Sequence.insert(i+actual_way,copy.deepcopy(State_Sequence[actual_way])) 
-                    i += 1 
-
-                #save the next states on respectives copied ways
-                i = actual_way 
-                for each in NextState: 
-                    State_Sequence[i].append(each) 
-                    i += 1 
-
-                # if ended one string, go to the next one
-                if State_Sequence[actual_way][-1] == targetID:
-                    actual_way += 1
-
-                # if still have strings to test, update actual_state to last one
-                if actual_way < len(State_Sequence):
-                    actual_state = State_Sequence[actual_way][-1]
-                # and if there is no more strings to test, end it
-                else:
-                    status = True
-
-        if not event:
-            # getting the events for the state sequence
-            i = 0
-            while i < len(State_Sequence):
-                answer = []
-                j = 0
-                while j < len(State_Sequence[i])-1:
-                    answer.append(AutomataFunctions.GetEventBetween(State_Sequence[i][j], State_Sequence[i][j+1]))
-                    j += 1
-                Event_Sequence.append(answer)
-                i += 1
-            return Event_Sequence
-        else:
-            return State_Sequence
-
-
-def GetAutomataStringBtw_WithLoop(sourceID,targetID):
+def GetAutomataStringBtw(sourceID,targetID):
     if targetID in GetAutReachable(sourceID): 
         State_Sequence = [[sourceID]]
         state = sourceID
@@ -751,30 +572,25 @@ def GetAutomataStringBtw_WithLoop(sourceID,targetID):
             else:
                 status = True
 
+
+        if len(State_Sequence) != 0:
+            primordia_state_sequence = list()
+            k = 0
+            while k < len(State_Sequence):
+                answer = []
+                j = 0
+                while j < len(State_Sequence[k])-1:
+                    answer.append(AutomataFunctions.GetEventBetween(State_Sequence[k][j], State_Sequence[k][j+1]))
+                    j += 1
+                primordia_state_sequence.append(answer)
+                k += 1
+            
+            i = 0
+            for x in primordia_state_sequence:
+                loops_event_sequence.insert(i, x)
+                i += 1
+
         return loops_event_sequence
-
-
-
-def GetAutomataStringBtw(sourceID, targetID):
-    loop = AuxiliaryFunctions.master_loop_verification()
-
-    event_sequence = list()
-    event_sequence.append(GetAutomataStringBtw_WithoutLoop(sourceID, targetID)) 
-    if loop:
-        event_sequence.append(GetAutomataStringBtw_WithLoop(sourceID, targetID)) 
-
-    Event_sequence = list()
-    for n in event_sequence:
-        for k in n:
-            Event_sequence.append(k)
-        
-    Event_sequence = AuxiliaryFunctions.checking_duplicate_string(Event_sequence)    
-
-    for j in Event_sequence:
-        if len(j) == 0:
-            Event_sequence.remove(j)
-
-    return Event_sequence
 
 
 def GetStringsToFault():

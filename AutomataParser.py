@@ -1,5 +1,5 @@
 from xml.dom.minidom import parse
-doc = parse('BG_5.xml')
+doc = parse('GG_5.xml')
 xml = doc.documentElement
 
 data = xml.getElementsByTagName('data')
