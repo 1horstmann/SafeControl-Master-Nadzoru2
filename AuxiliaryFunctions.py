@@ -37,14 +37,6 @@ def loop_verification(targets, State_Sequence):
     return Loop
 
 
-# def NextStatesIdsLoopWithoutLoop(actual_state, State_Sequence_fora_do_loop):
-#     for i in range(0, len(State_Sequence_fora_do_loop)):
-#         if str(actual_state) in State_Sequence_fora_do_loop[i][-1]:
-#             State_Sequence_fora_do_loop.pop(i)
-#             break
-#     return State_Sequence_fora_do_loop
-
-
 def NextStatesIdsLoopWithoutLoop(actual_state, targetID, State_Sequence_fora_do_loop):
     
     # Excluindo a cadeia com loop

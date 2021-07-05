@@ -167,7 +167,6 @@ def GetAutReachable(state_ID):
 def GetDiagnoserStringBtw_WithoutLoop(sourceID,targetID, just_string=False):
     Event_Sequence = [] 
     W = 0
-
     # runs only if it is possible to reach it (returns [] if there is no possible string)
     if targetID in GetDiagReachable(sourceID): 
         State_Sequence = [[sourceID]]
@@ -176,7 +175,6 @@ def GetDiagnoserStringBtw_WithoutLoop(sourceID,targetID, just_string=False):
         actual_way = 0 
         way_num = 1 
         status = False 
-
         first_loop_state = 0
         NextStatesIdsLoop = False
 
@@ -203,7 +201,7 @@ def GetDiagnoserStringBtw_WithoutLoop(sourceID,targetID, just_string=False):
             way_num += len(NextState) -1 
 
             if NextStatesIdsLoop and W > 5:
-                State_Sequence = AuxiliaryFunctions.NextStatesIdsLoopWithoutLoop(actual_state, State_Sequence)
+                State_Sequence = AuxiliaryFunctions.NextStatesIdsLoopWithoutLoop(actual_state, targetID, State_Sequence)
                 break
 
             # and copy actual way how many times it's needed
@@ -254,15 +252,49 @@ def GetDiagnoserStringBtw_WithoutLoop(sourceID,targetID, just_string=False):
 #         way_num = 1 
 #         status = False 
 #         there_is_loop = False
-
 #         loops_event_sequence = list()
+#         todas_as_cadeias = list()
 #         num_loop = 0
-
 
 #         while not status:        
 #             lista_eventos_ruins = list()
 #             lista_eventos_bons = list()
+#             lista_termos_ruins = list()
 #             for i in range(len(State_Sequence)):
+
+#                 #? Função que tirar loops indevidos. Exemplo: ['1', '2', '1', '2'] 
+#                 strin = ''
+#                 for each in State_Sequence[i]:
+#                     strin = strin + str(each)
+
+#                 n_termos = 1
+#                 n = [1,2,3,4,5,6,7,8,9,10]
+#                 for numero in n:
+#                     if numero*2 < len(strin):
+#                         n_termos += 1
+#                     else:
+#                         break
+
+#                 lista_termos = list()
+#                 while n_termos != 1:
+#                     for n in range(len(strin)-n_termos+1):
+#                         lista_termos.append(strin[n:n+n_termos])
+#                     n_termos -= 1
+
+#                 for k in range(len(lista_termos)):
+#                     if k+len(lista_termos[k]) < len(lista_termos):
+#                         targets_ultimo = DiagnoserFunctions.GetNextStatesInID(State_Sequence[i][-1])
+#                         if lista_termos[k] == lista_termos[k+len(lista_termos[k])] and len(targets_ultimo) < 3:
+#                             if len(targets_ultimo) == 1:
+#                                 lista_termos_ruins.append(State_Sequence[i])
+#                                 break
+
+#                             else:
+#                                 for j in range(len(State_Sequence[i])):
+#                                     if State_Sequence[i][j] in DiagnoserFunctions.GetNextStatesInID(State_Sequence[i][j]):
+#                                         lista_termos_ruins.append(State_Sequence[i])
+#                                         break
+
 #                 for j in range(len(State_Sequence[i])):
 #                     if State_Sequence[i].count(str(State_Sequence[i][j])) > 2:
 #                         lista_eventos_ruins.append(State_Sequence[i])
@@ -281,18 +313,39 @@ def GetDiagnoserStringBtw_WithoutLoop(sourceID,targetID, just_string=False):
 #             else:
 #                 igual = False
 
+#             if len(lista_termos_ruins) > 0:
+#                 repetido = True
+#             else:
+#                 repetido = False 
+
 #             for i in range(0, len(State_Sequence)):
 #                 if  maior:
 #                     for each in lista_eventos_ruins:
 #                         State_Sequence.remove(each)
-#                     actual_state = State_Sequence[i][-1]
-
-#                 if igual:
+                
+#                 if repetido:
+#                     for each in lista_termos_ruins:
+#                         State_Sequence.remove(each)  
+                
+                
+#                 elif igual:
 #                     for each in lista_eventos_bons:
 #                         a = each.copy()
 #                         State_Sequence.remove(a)
 #                         loops_sequences = [a]
-                        
+
+#                         todas_as_cadeias.append(a[:])
+#                         if a[-1] != targetID:
+#                             final_cadeia = GetDiagnoserStringBtw_WithoutLoop(a[-1], targetID, just_string=True)[0]
+
+#                             for x in range(len(final_cadeia)):
+#                                 if x != 0:
+#                                     todas_as_cadeias[-1].append(final_cadeia[x])
+
+#                         nao = False
+#                         if targetID in a:
+#                             nao = True
+
 #                         k = 0
 #                         while k < len(loops_sequences):
 #                             answer = []
@@ -303,16 +356,15 @@ def GetDiagnoserStringBtw_WithoutLoop(sourceID,targetID, just_string=False):
 #                             loops_event_sequence.append(answer)
 #                             k += 1
                         
-#                         novo_alvo = a[-1]
-#                         loop_event_sequence = GetDiagnoserStringBtw_WithoutLoop(novo_alvo, targetID)[0]
+#                         if not nao:
+#                             loop_event_sequence = GetDiagnoserStringBtw_WithoutLoop(a[-1], targetID)[0]
 
-#                         for x in loop_event_sequence:
-#                             if [targetID] in loops_event_sequence[num_loop]:
-#                                 break
-#                             loops_event_sequence[num_loop].append(x)
-#                         num_loop += 1 
+#                             for x in loop_event_sequence:
+#                                 if nao:
+#                                     break
+#                                 loops_event_sequence[num_loop].append(x)
+#                             num_loop += 1 
 
-#                     actual_state = State_Sequence[i][-1]
 
 #                 if len(State_Sequence) == 1 and State_Sequence[0][-1] == targetID:
 #                     status = True
@@ -320,8 +372,19 @@ def GetDiagnoserStringBtw_WithoutLoop(sourceID,targetID, just_string=False):
 #                 if len(State_Sequence) == 0:
 #                     status = True
 
-#                 if igual or maior or there_is_loop:
+#                 if igual or maior or repetido or there_is_loop:
+#                     if len(State_Sequence) != 0:
+#                         for k in range(len(State_Sequence)):
+#                             if State_Sequence[k][-1] == targetID:
+#                                 status = True
+
+#                             if State_Sequence[k][-1] != targetID:
+#                                 actual_state = State_Sequence[k][-1]
+#                                 actual_way = k
+#                                 status = False
+#                                 break
 #                     break
+
 #             if status:
 #                 break
             
@@ -362,7 +425,55 @@ def GetDiagnoserStringBtw_WithoutLoop(sourceID,targetID, just_string=False):
 #             else:
 #                 status = True
 
+#         #? Pega a combinação linear dos loops
+#         if len(todas_as_cadeias) != 0:
+#             comum_inicial = list()
+#             inicial = True
 
+#             comum_final = list()
+#             final = True
+#             diferente = list()
+
+#             i = 0 #posições
+#             parar = False
+#             while not parar:
+#                 estado_igual1 = list()
+#                 estado_igual2 = list()
+#                 for j in range(len(todas_as_cadeias)):  #cadeia
+#                     estado_igual1.append(todas_as_cadeias[j][i])
+#                     if i != 0:
+#                         estado_igual2.append(todas_as_cadeias[j][-i])
+                        
+#                     if i+1 == len(todas_as_cadeias[j]):
+#                         parar = True
+                        
+#                 if len(set(estado_igual1)) == 1 and inicial:
+#                     comum_inicial.append(estado_igual1[0][0]) 
+#                 else:
+#                     inicial = False
+
+#                 if len(set(estado_igual2)) == 1 and final:
+#                     comum_final.append(estado_igual2[0][0])
+#                 elif i != 0:
+#                     final = False
+                    
+#                 i += 1
+                
+#             comum_final.reverse()
+#             comum_final.pop(0)
+#             diferente = todas_as_cadeias[:]
+#             for n in range(len(diferente)):
+#                 del(diferente[n][:len(comum_inicial)])
+#                 del(diferente[n][-len(comum_final):])
+
+#             for n in range(len(diferente)):
+#                 for k in range(len(diferente)):
+#                     if n + k < len(diferente) and diferente[n] != diferente[n+k] and comum_inicial + diferente[n] + diferente[n+k] + comum_final not in State_Sequence: 
+#                         State_Sequence.append(comum_inicial + diferente[n] + diferente[n+k] + comum_final)
+                        
+#                     elif diferente[n] != diferente[n+k-len(diferente)] and comum_inicial + diferente[n] + diferente[n+k-len(diferente)] + comum_final not in State_Sequence:
+#                         State_Sequence.append(comum_inicial + diferente[n] + diferente[n+k-len(diferente)] + comum_final)
+            
 #         if len(State_Sequence) != 0:
 #             primordia_state_sequence = list()
 #             k = 0
@@ -389,260 +500,60 @@ def GetDiagnoserStringBtw_WithoutLoop(sourceID,targetID, just_string=False):
 
 
 
-def GetDiagnoserStringBtw(sourceID,targetID):
-    if targetID in GetDiagReachable(sourceID): 
-        State_Sequence = [[sourceID]]
-        state = sourceID
-        actual_state = state 
-        actual_way = 0 
-        way_num = 1 
-        status = False 
-        there_is_loop = False
-        loops_event_sequence = list()
-        todas_as_cadeias = list()
-        num_loop = 0
-
-        while not status:        
-            lista_eventos_ruins = list()
-            lista_eventos_bons = list()
-            lista_termos_ruins = list()
-            for i in range(len(State_Sequence)):
-
-                #? Função que tirar loops indevidos. Exemplo: ['1', '2', '1', '2'] 
-                strin = ''
-                for each in State_Sequence[i]:
-                    strin = strin + str(each)
-
-                n_termos = 1
-                n = [1,2,3,4,5,6,7,8,9,10]
-                for numero in n:
-                    if numero*2 < len(strin):
-                        n_termos += 1
-                    else:
-                        break
-
-                lista_termos = list()
-                while n_termos != 1:
-                    for n in range(len(strin)-n_termos+1):
-                        lista_termos.append(strin[n:n+n_termos])
-                    n_termos -= 1
-
-                for k in range(len(lista_termos)):
-                    if k+len(lista_termos[k]) < len(lista_termos):
-                        targets_ultimo = DiagnoserFunctions.GetNextStatesInID(State_Sequence[i][-1])
-                        if lista_termos[k] == lista_termos[k+len(lista_termos[k])] and len(targets_ultimo) < 3:
-                            if len(targets_ultimo) == 1:
-                                lista_termos_ruins.append(State_Sequence[i])
-                                break
-
-                            else:
-                                for j in range(len(State_Sequence[i])):
-                                    if State_Sequence[i][j] in DiagnoserFunctions.GetNextStatesInID(State_Sequence[i][j]):
-                                        lista_termos_ruins.append(State_Sequence[i])
-                                        break
-
-                for j in range(len(State_Sequence[i])):
-                    if State_Sequence[i].count(str(State_Sequence[i][j])) > 2:
-                        lista_eventos_ruins.append(State_Sequence[i])
-                        break
-                    elif State_Sequence[i].count(str(actual_state)) == 2:
-                        lista_eventos_bons.append(State_Sequence[i])
-                        break
-
-            if len(lista_eventos_ruins) > 0:
-                maior = True
-            else:
-                maior = False
-
-            if len(lista_eventos_bons) > 0:
-                igual = True
-            else:
-                igual = False
-
-            if len(lista_termos_ruins) > 0:
-                repetido = True
-            else:
-                repetido = False 
-
-            for i in range(0, len(State_Sequence)):
-                if  maior:
-                    for each in lista_eventos_ruins:
-                        State_Sequence.remove(each)
-                
-                if repetido:
-                    for each in lista_termos_ruins:
-                        State_Sequence.remove(each)  
-                
-                
-                elif igual:
-                    for each in lista_eventos_bons:
-                        a = each.copy()
-                        State_Sequence.remove(a)
-                        loops_sequences = [a]
-
-                        todas_as_cadeias.append(a[:])
-                        if a[-1] != targetID:
-                            final_cadeia = GetDiagnoserStringBtw_WithoutLoop(a[-1], targetID, just_string=True)[0]
-
-                            for x in range(len(final_cadeia)):
-                                if x != 0:
-                                    todas_as_cadeias[-1].append(final_cadeia[x])
-
-                        nao = False
-                        if targetID in a:
-                            nao = True
-
-                        k = 0
-                        while k < len(loops_sequences):
-                            answer = []
-                            j = 0
-                            while j < len(loops_sequences[k])-1:
-                                answer.append(DiagnoserFunctions.GetEventBetween(loops_sequences[k][j], loops_sequences[k][j+1]))
-                                j += 1
-                            loops_event_sequence.append(answer)
-                            k += 1
-                        
-                        if not nao:
-                            loop_event_sequence = GetDiagnoserStringBtw_WithoutLoop(a[-1], targetID)[0]
-
-                            for x in loop_event_sequence:
-                                if nao:
-                                    break
-                                loops_event_sequence[num_loop].append(x)
-                            num_loop += 1 
 
 
-                if len(State_Sequence) == 1 and State_Sequence[0][-1] == targetID:
-                    status = True
 
-                if len(State_Sequence) == 0:
-                    status = True
 
-                if igual or maior or repetido or there_is_loop:
-                    if len(State_Sequence) != 0:
-                        for k in range(len(State_Sequence)):
-                            if State_Sequence[k][-1] == targetID:
-                                status = True
 
-                            if State_Sequence[k][-1] != targetID:
-                                actual_state = State_Sequence[k][-1]
-                                actual_way = k
-                                status = False
-                                break
-                    break
 
-            if status:
-                break
-            
-            NextStatesIds = DiagnoserFunctions.GetNextStatesInID(actual_state) 
-            NextState = [] 
-            n = 0
 
-            for each in NextStatesIds:
-                targets = GetDiagReachable(each) 
 
-                if ((targetID in targets) or (each == targetID)): 
-                    NextState.append(each) 
-                    n += 1 
 
-            # if more then one next state was saved, increases the number of ways to get to the target
-            way_num += len(NextState) -1 
 
-            # and copy actual way how many times it's needed
-            i = 1 
-            while i < len(NextState): 
-                State_Sequence.insert(i+actual_way,copy.deepcopy(State_Sequence[actual_way])) 
-                i += 1 
 
-            #save the next states on respectives copied ways
-            i = actual_way 
-            for each in NextState: 
-                State_Sequence[i].append(each) 
-                i += 1 
 
-            # if ended one string, go to the next one
-            if State_Sequence[actual_way][-1] == targetID:
-                actual_way += 1
 
-            # if still have strings to test, update actual_state to last one
-            if actual_way < len(State_Sequence):
-                actual_state = State_Sequence[actual_way][-1]
-            # and if there is no more strings to test, end it
-            else:
-                status = True
 
-        #? Pega a combinação linear dos loops
-        if len(todas_as_cadeias) != 0:
-            comum_inicial = list()
-            inicial = True
 
-            comum_final = list()
-            final = True
-            diferente = list()
 
-            i = 0 #posições
-            parar = False
-            while not parar:
-                estado_igual1 = list()
-                estado_igual2 = list()
-                for j in range(len(todas_as_cadeias)):  #cadeia
-                    estado_igual1.append(todas_as_cadeias[j][i])
-                    if i != 0:
-                        estado_igual2.append(todas_as_cadeias[j][-i])
-                        
-                    if i+1 == len(todas_as_cadeias[j]):
-                        parar = True
-                        
-                if len(set(estado_igual1)) == 1 and inicial:
-                    comum_inicial.append(estado_igual1[0][0]) 
-                else:
-                    inicial = False
 
-                if len(set(estado_igual2)) == 1 and final:
-                    comum_final.append(estado_igual2[0][0])
-                elif i != 0:
-                    final = False
-                    
-                i += 1
-                
-            comum_final.reverse()
-            comum_final.pop(0)
-            diferente = todas_as_cadeias[:]
-            for n in range(len(diferente)):
-                del(diferente[n][:len(comum_inicial)])
-                del(diferente[n][-len(comum_final):])
 
-            for n in range(len(diferente)):
-                for k in range(len(diferente)):
-                    if n + k < len(diferente) and diferente[n] != diferente[n+k] and comum_inicial + diferente[n] + diferente[n+k] + comum_final not in State_Sequence: 
-                        State_Sequence.append(comum_inicial + diferente[n] + diferente[n+k] + comum_final)
-                        
-                    elif diferente[n] != diferente[n+k-len(diferente)] and comum_inicial + diferente[n] + diferente[n+k-len(diferente)] + comum_final not in State_Sequence:
-                        State_Sequence.append(comum_inicial + diferente[n] + diferente[n+k-len(diferente)] + comum_final)
-            
-        if len(State_Sequence) != 0:
-            primordia_state_sequence = list()
-            k = 0
-            while k < len(State_Sequence):
-                answer = []
-                j = 0
-                while j < len(State_Sequence[k])-1:
-                    answer.append(DiagnoserFunctions.GetEventBetween(State_Sequence[k][j], State_Sequence[k][j+1]))
-                    if State_Sequence[k][j+1] == targetID:
-                        break
-                    j += 1
-                
-                if len(State_Sequence[k]) == 1:
-                    answer.append(DiagnoserFunctions.GetEventBetween(State_Sequence[k][0], State_Sequence[k][0]))
-                primordia_state_sequence.append(answer)
-                k += 1
 
-            i = 0
-            for x in primordia_state_sequence:
-                loops_event_sequence.insert(i, x)
-                i += 1
 
-        return loops_event_sequence
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 def GetAutomataStringBtw_WithoutLoop(sourceID,targetID, just_string=False): 
@@ -746,23 +657,16 @@ def GetAutomataStringBtw(sourceID,targetID):
 
                 #? Função que tirar loops indevidos. Exemplo: ['1', '2', '1', '2'] 
                 #! Isso aqui da pra arrumar, não precisa usar strings, da pra fazer com lista
-                strin = ''
-                for each in State_Sequence[i]:
-                    strin = strin + str(each)
 
-                n_termos = 1
-                n = [1,2,3,4,5,6,7,8,9,10]
-                for numero in n: 
-                    if numero*2 < len(strin): 
+                n_termos = 0
+                for numero in range(1, len(State_Sequence[i])):
+                    if numero*2 <= len(State_Sequence[i]):
                         n_termos += 1
-                    else:
-                        break
-
+                        
                 lista_termos = list()
-                while n_termos != 1:
-                    for n in range(len(strin)-n_termos+1):
-                        lista_termos.append(strin[n:n+n_termos])
-                    n_termos -= 1
+                for k in range(n_termos, 1, -1):
+                    for n in range(len(State_Sequence[i]) - k + 1):
+                        lista_termos.append(State_Sequence[i][n:n+k])
 
                 for k in range(len(lista_termos)):
                     if k+len(lista_termos[k]) < len(lista_termos):
