@@ -1,5 +1,5 @@
 from xml.dom.minidom import parse
-doc = parse('GG_sd5.xml')
+doc = parse('G_d6.xml')
 xml = doc.documentElement
 
 data = xml.getElementsByTagName('data')
@@ -87,3 +87,12 @@ for transition_source in transitions:
 
 
 
+diag_dict_states = dict()
+for i in range(len(State_Name_Table)):
+    diag_dict_states[State_Id_Table[i]] = State_Name_Table[i]
+print(f'diag_dict_states = {diag_dict_states}')
+
+diag_dict_events = dict()
+for i in range(len(Event_Id_Table)):
+    diag_dict_events[Event_Id_Table[i]] = Event_Name_Table[i]
+print(f'diag_dict_events = {diag_dict_events}')

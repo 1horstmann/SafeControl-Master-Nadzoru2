@@ -37,11 +37,38 @@ def loop_verification(targets, State_Sequence):
     return Loop
 
 
-def NextStatesIdsLoopWithoutLoop(actual_state, State_Sequence_fora_do_loop):
+# def NextStatesIdsLoopWithoutLoop(actual_state, State_Sequence_fora_do_loop):
+#     for i in range(0, len(State_Sequence_fora_do_loop)):
+#         if str(actual_state) in State_Sequence_fora_do_loop[i][-1]:
+#             State_Sequence_fora_do_loop.pop(i)
+#             break
+#     return State_Sequence_fora_do_loop
+
+
+def NextStatesIdsLoopWithoutLoop(actual_state, targetID, State_Sequence_fora_do_loop):
+    
+    # Excluindo a cadeia com loop
     for i in range(0, len(State_Sequence_fora_do_loop)):
-        if str(actual_state) in State_Sequence_fora_do_loop[i][-1]:
-            State_Sequence_fora_do_loop.pop(i)
-            break
+            if str(actual_state) in State_Sequence_fora_do_loop[i][-1]:
+                State_Sequence_fora_do_loop.pop(i)
+                break
+
+    if len(State_Sequence_fora_do_loop) > 1:
+        # Pegando todas as cadeias possíveis
+        string = {'normal':[], 'falha':[]}
+        for k in range(len(State_Sequence_fora_do_loop)):
+            if State_Sequence_fora_do_loop[k][-1] == targetID:
+                string['falha'] = State_Sequence_fora_do_loop[k]
+            else:
+                string['normal'] = State_Sequence_fora_do_loop[k]     
+
+        State_Sequence_fora_do_loop = [string['falha']]
+        for k in range(len(string['falha'])):
+            if string['falha'][-k] == string['normal'][-1]:
+                string['normal'] += string['falha'][-k+1:-1] + [string['falha'][-1]]
+                State_Sequence_fora_do_loop.append(string['normal'])
+                break
+
     return State_Sequence_fora_do_loop
 
 
@@ -145,6 +172,9 @@ def checking_duplicate_string(Event_sequence):
                 Final_Event_sequence.append(Event_sequence[i])
 
     return Final_Event_sequence
+
+
+
 
 
 

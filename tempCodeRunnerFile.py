@@ -1,5 +1,3 @@
-StringsFunctions.ConsideredStrings_Publish()
-StringsFunctions.IsDiag()
 StringsFunctions.IsDiag_Publish()
 StringsFunctions.IsSafeDiag()
 StringsFunctions.IsSafeDiag_Publish()

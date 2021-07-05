@@ -11,7 +11,6 @@ def ConsideredStrings_Publish():
     """Get all the strings considered by the algorithm
     """
     strings = FU_s.GetStringPath()
-    # print(f'strings = {strings}')
 
     Strings = []
     for k in strings:

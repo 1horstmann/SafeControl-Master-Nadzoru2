@@ -66,9 +66,15 @@ def GetStringPath():
 
     Fault_Events = DefineStrings.GetFaultEventsPosition() 
 
-    for each in Fault_Events: 
+    for n, each in enumerate(Fault_Events): 
         y = DefineStrings.GetString(each) 
-        Strings.append(y) 
+
+        if n == 0:
+            Strings.append(y) 
+        elif y != Strings[n-1]:
+            Strings.append(y) 
+
+
 
     return(Strings) 
 
