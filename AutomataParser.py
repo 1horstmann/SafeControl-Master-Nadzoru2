@@ -1,5 +1,5 @@
 from xml.dom.minidom import parse
-doc = parse('BG_23.xml')
+doc = parse('GG_5.xml')
 xml = doc.documentElement
 
 data = xml.getElementsByTagName('data')
@@ -88,13 +88,13 @@ for transition_source in transitions:
 
 
 
-aut_dict_states = dict()
-for i in range(len(Aut_State_Name_Table)):
-    aut_dict_states[Aut_State_Id_Table[i]] = Aut_State_Name_Table[i]
-print(f'aut_dict_states = {aut_dict_states}')
+# aut_dict_states = dict()
+# for i in range(len(Aut_State_Name_Table)):
+#     aut_dict_states[Aut_State_Id_Table[i]] = Aut_State_Name_Table[i]
+# print(f'aut_dict_states = {aut_dict_states}')
 
-aut_dict_events = dict()
-for i in range(len(Aut_Event_Id_Table)):
-    aut_dict_events[Aut_Event_Id_Table[i]] = Aut_Event_Name_Table[i]
-print(f'aut_dict_events = {aut_dict_events}')
+# aut_dict_events = dict()
+# for i in range(len(Aut_Event_Id_Table)):
+#     aut_dict_events[Aut_Event_Id_Table[i]] = Aut_Event_Name_Table[i]
+# print(f'aut_dict_events = {aut_dict_events}')
 
