@@ -16,6 +16,7 @@ def ConsideredStrings_Publish():
     for k in strings:
         for n in k:
             Strings.append(n)
+    # Strings.reverse()
 
     sum = 0
     while sum < len(Strings):
